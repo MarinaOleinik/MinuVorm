@@ -14,7 +14,7 @@ namespace MinuVorm
 {
     public partial class MyForm: Form
     {
-        Pilet pilet;
+        
         Label message = new Label();
         Button[] btn = new Button[4];
         string[] texts = new string[4];
@@ -23,6 +23,8 @@ namespace MinuVorm
         static List<Pilet> piletid;
         int k, r;
         static string[] read_kohad;
+        
+
         public MyForm()
         {}
         public MyForm(string title,string body,string button1,string button2,string button3,string button4)
@@ -159,32 +161,33 @@ namespace MinuVorm
         //    mailMessage.To.Add(new MailAddress("programmeeriminetthk@gmail.com"));
         //    smtpClient.Send(mailMessage);
         //}
-        public void Saada_piletid()
+        
+        public void Saada_piletid(List<Pilet> piletid)
         {
             string text="Sinu ost on \n";
             foreach (var item in piletid)
             {
                 text += "Pilet:\n" + "Rida: "+item.Rida+"Koht: "+item.Koht+"\n";
             }
+            
+            //message.Attachments.Add(new Attachment("file.pdf"));
             string email = "programmeeriminetthk@gmail.com";
             string password = "2.kuursus";
-            MailMessage message = new MailMessage();
-            message.To.Add(new MailAddress("programmeeriminetthk@gmail.com"));//kellele saada vaja küsida
-            message.From = new MailAddress("programmeeriminetthk@gmail.com");
-            message.Subject = "Ostetud piletid";
-            message.Body = text;
-            message.IsBodyHtml = true;
-            //message.Attachments.Add(new Attachment("file.pdf"));
-
             SmtpClient client = new SmtpClient("smtp.gmail.com");
             client.Port = 587;
             client.Credentials = new NetworkCredential(email, password);
-            client.EnableSsl = true;
-            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.UseDefaultCredentials = true;
+            client.EnableSsl = true;            
+            //client.UseDefaultCredentials = true;
 
             try
             {
+
+                MailMessage message = new MailMessage();
+                message.To.Add(new MailAddress("programmeeriminetthk@gmail.com"));//kellele saada vaja küsida
+                message.From = new MailAddress("programmeeriminetthk@gmail.com");
+                message.Subject = "Ostetud piletid";
+                message.Body = text;
+                message.IsBodyHtml = true;
                 client.Send(message);
                 //await client.SendMailAsync(message);
             }
