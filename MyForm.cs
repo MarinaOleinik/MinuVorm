@@ -55,7 +55,6 @@ namespace MinuVorm
             texts[0] = button1;
             texts[1] = button2;
 
-
             this.ClientSize = new System.Drawing.Size(400, 100);
             this.Text = title;
             int x = 10;
@@ -81,7 +80,6 @@ namespace MinuVorm
             {
                 StreamReader f = new StreamReader(@"..\..\Piletid\piletid.txt");
                 read_kohad = f.ReadToEnd().Split(';');
-                int kogus = read_kohad.Length;
                 f.Close();
             }
             catch (Exception e)
@@ -127,16 +125,12 @@ namespace MinuVorm
             {
                 for (k = 0; k < kohad; k++)
                 {
-
                     Button btn_tabel = Uusnupp((sender,e)=> Pileti_valik(sender,e));
-                    
                     foreach (var item in read_kohad)
                     {
-
                         if (item.ToString() == btn_tabel.Name)
                         {
                             btn_tabel.BackColor = Color.Red;
-                            MessageBox.Show(item, btn_tabel.BackColor.ToString());
                         }
                     }
                     this.tlp.Controls.Add(btn_tabel, k, r);
@@ -146,33 +140,53 @@ namespace MinuVorm
             this.Controls.Add(tlp);
             
         }
-        public void Saada_piletid(List<Pilet> piletid)
+        //private void SendMail(string mail)
+        //{
+        //    var smtpClient = new SmtpClient("smtp.gmail.com")
+        //    {
+        //        Port = 587,
+        //        Credentials = new NetworkCredential("programmeeriminetthk@gmail.com", "2.kuursus"),
+        //        EnableSsl = true,
+        //    };
+        //    var mailMessage = new MailMessage
+        //    {
+        //        From = new MailAddress("Cinema.Amogus@service.com"),
+        //        Subject = "Piletid",
+        //        Body = "<h1>Hello. I'm an automated cinema 'Amogus' service!</h1>\nThese are the tickets you've bought: \n<strong>" + mail + "</strong>",
+        //        IsBodyHtml = true,
+        //    };
+
+        //    mailMessage.To.Add(new MailAddress("programmeeriminetthk@gmail.com"));
+        //    smtpClient.Send(mailMessage);
+        //}
+        public void Saada_piletid()
         {
             string text="Sinu ost on \n";
             foreach (var item in piletid)
             {
                 text += "Pilet:\n" + "Rida: "+item.Rida+"Koht: "+item.Koht+"\n";
             }
-            
+            string email = "programmeeriminetthk@gmail.com";
+            string password = "2.kuursus";
             MailMessage message = new MailMessage();
-            message.To.Add(new MailAddress("programmeeriminetthk@gmail.com"));
-            message.From= new MailAddress("programmeeriminetthk@gmail.com");
+            message.To.Add(new MailAddress("programmeeriminetthk@gmail.com"));//kellele saada vaja küsida
+            message.From = new MailAddress("programmeeriminetthk@gmail.com");
             message.Subject = "Ostetud piletid";
             message.Body = text;
-            string email="programmeeriminetthk@gmail.com";
-            string password = "2.kuursus";
-            SmtpClient client = new SmtpClient("smtp.gmail.com")
-            {
-                Port = 587,
-                Credentials = new NetworkCredential(email, password),
-                EnableSsl = true,
-            };
-            
+            message.IsBodyHtml = true;
+            //message.Attachments.Add(new Attachment("file.pdf"));
+
+            SmtpClient client = new SmtpClient("smtp.gmail.com");
+            client.Port = 587;
+            client.Credentials = new NetworkCredential(email, password);
+            client.EnableSsl = true;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.UseDefaultCredentials = true;
 
             try
             {
                 client.Send(message);
+                //await client.SendMailAsync(message);
             }
             catch (Exception ex)
             {
@@ -197,7 +211,6 @@ namespace MinuVorm
                     StreamWriter ost = new StreamWriter(@"..\..\Piletid\piletid.txt", true);
                     ost.Write(btn_click.Name.ToString() + ';');
                     ost.Close();
-
                 }
                 catch (Exception ex)
                 {
@@ -211,38 +224,24 @@ namespace MinuVorm
 
             if (MessageBox.Show("Sul on ostetud: " + piletid.Count() + "piletid", "Kas tahad saada neid e-mailile?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-
+                //SendMail("Text");
                 Saada_piletid(piletid);
             }
 
         }
-
-        
-
-        
-
         private void MyForm_Click(object sender, EventArgs e)
             {
                 Button btn_click = (Button)sender;
                 MessageBox.Show("Oli valitud " + btn_click.Text + " nupp");
-                
-            
-
             }
 
         private void InitializeComponent()
         {
             this.SuspendLayout();
-            // 
-            // MyForm
-            // 
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(284, 261);
             this.Name = "Kino";
-            
-            
             this.ResumeLayout(false);
-
         }
 
         
