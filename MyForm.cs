@@ -142,25 +142,7 @@ namespace MinuVorm
             this.Controls.Add(tlp);
             
         }
-        //private void SendMail(string mail)
-        //{
-        //    var smtpClient = new SmtpClient("smtp.gmail.com")
-        //    {
-        //        Port = 587,
-        //        Credentials = new NetworkCredential("programmeeriminetthk@gmail.com", "2.kuursus"),
-        //        EnableSsl = true,
-        //    };
-        //    var mailMessage = new MailMessage
-        //    {
-        //        From = new MailAddress("Cinema.Amogus@service.com"),
-        //        Subject = "Piletid",
-        //        Body = "<h1>Hello. I'm an automated cinema 'Amogus' service!</h1>\nThese are the tickets you've bought: \n<strong>" + mail + "</strong>",
-        //        IsBodyHtml = true,
-        //    };
-
-        //    mailMessage.To.Add(new MailAddress("programmeeriminetthk@gmail.com"));
-        //    smtpClient.Send(mailMessage);
-        //}
+        
         
         public void Saada_piletid(List<Pilet> piletid)
         {
