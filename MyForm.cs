@@ -13,8 +13,7 @@ using System.Windows.Forms;
 namespace MinuVorm
 {
     public partial class MyForm: Form
-    {
-        
+    {       
         Label message = new Label();
         Button[] btn = new Button[4];
         string[] texts = new string[4];
@@ -22,9 +21,8 @@ namespace MinuVorm
         Button btn_tabel;
         static List<Pilet> piletid;
         int k, r;
+        string film;
         static string[] read_kohad;
-        
-
         public MyForm()
         {}
         public MyForm(string title,string body,string button1,string button2,string button3,string button4)
@@ -102,7 +100,7 @@ namespace MinuVorm
             btn_tabel.Click += new EventHandler(Pileti_valik);
             return btn_tabel;
         }
-        public MyForm(int read, int kohad)
+        public MyForm(int read, int kohad,string film)
         {
             this.tlp.ColumnCount = kohad;
             this.tlp.RowCount = read;
@@ -111,7 +109,7 @@ namespace MinuVorm
             int i, j;
             read_kohad = Ostetud_piletid();
             piletid = new List<Pilet> { };
-           
+            this.Text = film;
             for (i = 0; i < read; i++)
             {
                 this.tlp.RowStyles.Add(new RowStyle(SizeType.Percent));
@@ -133,6 +131,7 @@ namespace MinuVorm
                         if (item.ToString() == btn_tabel.Name)
                         {
                             btn_tabel.BackColor = Color.Red;
+                            btn_tabel.Enabled = false;
                         }
                     }
                     this.tlp.Controls.Add(btn_tabel, k, r);
@@ -143,13 +142,13 @@ namespace MinuVorm
             
         }
         
-        
         public void Saada_piletid(List<Pilet> piletid)
         {
+            
             string text="Sinu ost on \n";
             foreach (var item in piletid)
             {
-                text += "Pilet:\n" + "Rida: "+item.Rida+"Koht: "+item.Koht+"\n";
+                text += "Pilet:\n" + "Rida: "+item.Rida+"Koht: "+item.Koht+"\n";  
             }
             
             //message.Attachments.Add(new Attachment("file.pdf"));
@@ -171,7 +170,7 @@ namespace MinuVorm
                 message.Body = text;
                 message.IsBodyHtml = true;
                 client.Send(message);
-                //await client.SendMailAsync(message);
+                piletid.Clear();
             }
             catch (Exception ex)
             {
@@ -182,13 +181,13 @@ namespace MinuVorm
         {
             Button btn_click = (Button)sender;
             btn_click.BackColor = Color.Yellow;
-            MessageBox.Show(btn_click.Name.ToString());
             var rida = int.Parse(btn_click.Name[0].ToString());
             var koht = int.Parse(btn_click.Name[1].ToString());
             var vas = MessageBox.Show("Sinu pilet on: Rida: " + rida + " Koht: " +koht, "Kas ostad?", MessageBoxButtons.YesNo);
             if (vas == DialogResult.Yes)
             {
                 btn_click.BackColor = Color.Red;
+                btn_click.Enabled = false;
                 try
                 {
                     Pilet pilet = new Pilet(rida, koht);
@@ -196,6 +195,7 @@ namespace MinuVorm
                     StreamWriter ost = new StreamWriter(@"..\..\Piletid\piletid.txt", true);
                     ost.Write(btn_click.Name.ToString() + ';');
                     ost.Close();
+
                 }
                 catch (Exception ex)
                 {
@@ -219,7 +219,6 @@ namespace MinuVorm
                 Button btn_click = (Button)sender;
                 MessageBox.Show("Oli valitud " + btn_click.Text + " nupp");
             }
-
         private void InitializeComponent()
         {
             this.SuspendLayout();
@@ -227,8 +226,6 @@ namespace MinuVorm
             this.ClientSize = new System.Drawing.Size(284, 261);
             this.Name = "Kino";
             this.ResumeLayout(false);
-        }
-
-        
+        } 
     }
 }
