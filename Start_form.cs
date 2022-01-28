@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace MinuVorm
     {
         public Start_form()
         {
+            //this.TransparencyKey = Color.Turquoise;
             Button Start_btn = new Button
             {
                 Text = "Minu oma aken",
@@ -29,21 +31,42 @@ namespace MinuVorm
 
             PictureBox film = new PictureBox
             {
+                Name="bob.jpg",
                 Image = Image.FromFile(@"..\..\Filmid\bob.jpg"),
                 Location = new System.Drawing.Point(10, 100),
                 SizeMode = PictureBoxSizeMode.Zoom
             };
             this.Controls.Add(film);
             film.Click += Film_Click;
+            PictureBox film2 = new PictureBox
+            {
+                Name = "star.jpg",
+                Image = Image.FromFile(@"..\..\Filmid\star.jpg"),
+                Location = new System.Drawing.Point(90, 100),
+                SizeMode = PictureBoxSizeMode.Zoom
+            };
+            this.Controls.Add(film2);
+            film2.Click += Film_Click;
+            TextBox txt = new TextBox
+            {
+                
+                Text = "Vali film", 
+                BackColor = Color.Turquoise,
+                Location = new System.Drawing.Point(10, 200)
+            };
+            
+            this.Controls.Add(txt);
+            
         }
         string filminimetus;
         private void Film_Click(object sender, EventArgs e)
         {
-            filminimetus=Film();
+            PictureBox pic = (PictureBox)sender;
+            filminimetus = Application.StartupPath.Replace("bin\\Debug", "") + @"Filmid\"+pic.Name;
+            filminimetus =Film(filminimetus);
         }
-        private string Film()
+        private string Film(string filminimetus)
         {
-            filminimetus = "Bob";
             return filminimetus;
         }
         private void Start_btn_2_Click(object sender, EventArgs e)

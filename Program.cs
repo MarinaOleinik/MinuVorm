@@ -16,7 +16,7 @@ namespace MinuVorm
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Start_form());
+            Application.Run(new Admin_Form());
         }
     }
 }

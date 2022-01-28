@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Forms;
+
 
 namespace MinuVorm
 {
@@ -21,8 +21,14 @@ namespace MinuVorm
         Button btn_tabel;
         static List<Pilet> piletid;
         int k, r;
-        string film;
         static string[] read_kohad;
+        static string conn = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=C:\USERS\MARINA.OLEINIK\SOURCE\REPOS\MINUVORM\APPDATA\PILETID.MDF;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=False";
+        SqlConnection connect = new SqlConnection(conn);
+        static string conn_KinoDB = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\marina.oleinik\source\repos\MinuVorm\AppData\Kino_DB.mdf;Integrated Security=True";
+        SqlConnection connect_to_DB = new SqlConnection(conn_KinoDB);
+        
+        SqlCommand command;
+        SqlDataAdapter adapter;
         public MyForm()
         {}
         public MyForm(string title,string body,string button1,string button2,string button3,string button4)
@@ -77,10 +83,24 @@ namespace MinuVorm
         public string[] Ostetud_piletid()
         {
             try
-            {
+            {/*
                 StreamReader f = new StreamReader(@"..\..\Piletid\piletid.txt");
                 read_kohad = f.ReadToEnd().Split(';');
-                f.Close();
+                f.Close();*/
+                
+                connect_to_DB.Open();
+                adapter = new SqlDataAdapter("SELECT * FROM [dbo].[Piletid]", connect_to_DB);
+                DataTable tabel = new DataTable();
+                adapter.Fill(tabel);
+                read_kohad = new string[tabel.Rows.Count];
+                var index = 0;
+                foreach (DataRow row in tabel.Rows)
+                {
+                    var rida = row["Rida"];
+                    var koht = row["Koht"];
+                    read_kohad[index++]=$"{rida}{koht}";
+                }
+                connect_to_DB.Close(); 
             }
             catch (Exception e)
             {
@@ -144,33 +164,41 @@ namespace MinuVorm
         
         public void Saada_piletid(List<Pilet> piletid)
         {
-            
+            connect_to_DB.Open();           
             string text="Sinu ost on \n";
             foreach (var item in piletid)
             {
                 text += "Pilet:\n" + "Rida: "+item.Rida+"Koht: "+item.Koht+"\n";  
-            }
-            
+                command = new SqlCommand("INSERT INTO Piletid(Rida,Koht,Film) VALUES(@rida,@koht,@film)", connect_to_DB);
+                command.Parameters.AddWithValue("@rida", item.Rida); //kui informatsioon tekstilises reas siis,item.Rida asemel TextBox.Text
+                command.Parameters.AddWithValue("@koht", item.Koht);
+                command.Parameters.AddWithValue("@film", 1);
+                command.ExecuteNonQuery();
+            }            
+            connect_to_DB.Close();
+
             //message.Attachments.Add(new Attachment("file.pdf"));
             string email = "programmeeriminetthk@gmail.com";
-            string password = "2.kuursus";
+            string password = "2.kuursus tarpv20";
             SmtpClient client = new SmtpClient("smtp.gmail.com");
             client.Port = 587;
             client.Credentials = new NetworkCredential(email, password);
-            client.EnableSsl = true;            
-            //client.UseDefaultCredentials = true;
-
+            client.EnableSsl = true;
+            
             try
             {
-
+                
                 MailMessage message = new MailMessage();
-                message.To.Add(new MailAddress("programmeeriminetthk@gmail.com"));//kellele saada vaja küsida
+                message.To.Add(new MailAddress("marina.oleinik@tthk.ee"));//kellele saada vaja küsida
                 message.From = new MailAddress("programmeeriminetthk@gmail.com");
                 message.Subject = "Ostetud piletid";
                 message.Body = text;
                 message.IsBodyHtml = true;
+                //filename = GetFileContent();
+                //message.Attachments.Add(new Attachment(filename));
                 client.Send(message);
                 piletid.Clear();
+
             }
             catch (Exception ex)
             {
@@ -218,7 +246,9 @@ namespace MinuVorm
             {
                 Button btn_click = (Button)sender;
                 MessageBox.Show("Oli valitud " + btn_click.Text + " nupp");
+
             }
+
         private void InitializeComponent()
         {
             this.SuspendLayout();
@@ -226,6 +256,8 @@ namespace MinuVorm
             this.ClientSize = new System.Drawing.Size(284, 261);
             this.Name = "Kino";
             this.ResumeLayout(false);
-        } 
+        }
+        
+        
     }
 }
