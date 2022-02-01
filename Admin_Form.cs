@@ -16,11 +16,13 @@ namespace MinuVorm
         SqlConnection connect_to_DB = new SqlConnection(conn_KinoDB);
 
         SqlCommand command;
+        
         SqlDataAdapter adapter;
-        Button film_uuenda;
+        Button film_uuenda, film_kustuta, film_naita;
         public Admin_Form()
         {
-            this.Size = new System.Drawing.Size(800, 400);
+
+            this.Size = new System.Drawing.Size(800, 450);
             /*Button pilet_naita = new Button
             {
                 Location = new System.Drawing.Point(50, 50),
@@ -29,9 +31,9 @@ namespace MinuVorm
             };
             this.Controls.Add(pilet_naita);
             pilet_naita.Click += Pilet_naita_Click;*/
-            Button film_naita = new Button
+            film_naita = new Button
             {
-                Location = new System.Drawing.Point(150, 50),
+                Location = new System.Drawing.Point(50, 25),
                 Size = new System.Drawing.Size(80, 25),
                 Text = "Näita filmid"
             };
@@ -39,16 +41,25 @@ namespace MinuVorm
             film_naita.Click += Film_naita_Click;
             film_uuenda = new Button
             {
-                Location = new System.Drawing.Point(600, 75),
+                Location = new System.Drawing.Point(650, 75),
                 Size = new System.Drawing.Size(80, 25),
                 Text = "Uuendamine",
-                Visible=false
                 
             };
             this.Controls.Add(film_uuenda);
             film_uuenda.Click += Film_uuenda_Click;
+            film_kustuta = new Button
+            {
+                Location = new System.Drawing.Point(650, 100),
+                Size = new System.Drawing.Size(80, 25),
+                Text = "Kustutamine",
+
+
+            };
+            this.Controls.Add(film_kustuta);
         }
-        int Id;
+        static int Id=0;
+        
         private void Film_uuenda_Click(object sender, EventArgs e)
         {
             
@@ -99,7 +110,7 @@ namespace MinuVorm
             adapter_f.Fill(tabel_f);
             /*fkc = new ForeignKeyConstraint(tabel_f.Columns["Id"], tabel_p.Columns["Film_Id"]);
             tabel_p.Constraints.Add(fkc);*/
-
+            poster.Image = Image.FromFile("../../Posterid/Start.jpg");
 
             DataGridViewComboBoxCell cbc = new DataGridViewComboBoxCell();
             ComboBox com_f = new ComboBox();
@@ -118,9 +129,13 @@ namespace MinuVorm
         TextBox film_txt, aasta_txt, poster_txt;
         PictureBox poster;
         DataGridView dataGridView;
+        DataTable tabel;
         private void Film_naita_Click(object sender, EventArgs e)
         {
+            film_naita.Text = "Peida filmid";
             film_uuenda.Visible = true;
+            film_kustuta.Visible = true;
+
             film_txt = new TextBox
             {Location = new System.Drawing.Point(450, 75)};
             aasta_txt = new TextBox
@@ -130,30 +145,36 @@ namespace MinuVorm
             poster = new PictureBox
             {
                 Size = new System.Drawing.Size(180, 250),
-                Location=new System.Drawing.Point(450,150)
-                
-            };
+                Location=new System.Drawing.Point(450,150),
+                Image = Image.FromFile("../../Posterid/Start.jpg")
+        };
 
             Data();
-            this.Controls.Add(dataGridView);
+            /*this.Controls.Add(dataGridView);
             this.Controls.Add(film_txt);
             this.Controls.Add(aasta_txt);
             this.Controls.Add(poster_txt);
-            this.Controls.Add(poster);
-           
+            this.Controls.Add(poster);*/
+            
+
         }
         public void Data()
         {
             connect_to_DB.Open();
-            DataTable tabel = new DataTable();
+            tabel = new DataTable();
             dataGridView = new DataGridView();
             dataGridView.RowHeaderMouseClick += DataGridView_RowHeaderMouseClick;
-            SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM [dbo].[Filmid]", connect_to_DB);//, Kategooria WHERE Toodetable.Kategooria_Id=Kategooria.Id
+            adapter = new SqlDataAdapter("SELECT * FROM [dbo].[Filmid]", connect_to_DB);
             adapter.Fill(tabel);
             dataGridView.DataSource = tabel;
             dataGridView.Location = new System.Drawing.Point(10, 75);
             dataGridView.Size = new System.Drawing.Size(400, 200);
             connect_to_DB.Close();
+            this.Controls.Add(dataGridView);
+            this.Controls.Add(film_txt);
+            this.Controls.Add(aasta_txt);
+            this.Controls.Add(poster_txt);
+            this.Controls.Add(poster);
         }
         private void DataGridView_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -162,8 +183,8 @@ namespace MinuVorm
             aasta_txt.Text = dataGridView.Rows[e.RowIndex].Cells[2].Value.ToString();
             poster_txt.Text = dataGridView.Rows[e.RowIndex].Cells[3].Value.ToString();
             poster.Image = Image.FromFile(@"..\..\Posterid\" + dataGridView.Rows[e.RowIndex].Cells[3].Value.ToString());
-            //string v = dataGridView.Rows[e.RowIndex].Cells[5].Value.ToString();
-            //comboBox1.SelectedIndex = Int32.Parse(v) - 1;
+            this.Text = dataGridView.Rows[e.RowIndex].Cells[1].Value.ToString();
+
         }
         private void ClearData()
         {
