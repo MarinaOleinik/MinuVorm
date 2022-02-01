@@ -145,6 +145,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Start_form.resx">
+      <DependentUpon>Start_form.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -186,8 +189,7 @@
       <DependentUpon>Piletid.mdf</DependentUpon>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Filmid\bob.jpg" />
-    <Content Include="Filmid\star.jpg" />
+    <Content Include="Pildid\Fon.jpg" />
     <Content Include="Piletid\piletid.txt" />
     <Content Include="Posterid\355.JPG" />
     <Content Include="Posterid\Kuld.JPG" />

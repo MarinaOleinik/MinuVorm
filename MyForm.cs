@@ -164,6 +164,7 @@ namespace MinuVorm
         
         public void Saada_piletid(List<Pilet> piletid)
         {
+            
             connect_to_DB.Open();           
             string text="Sinu ost on \n";
             foreach (var item in piletid)

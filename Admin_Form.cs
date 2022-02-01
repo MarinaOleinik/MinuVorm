@@ -14,9 +14,7 @@ namespace MinuVorm
     {
         static string conn_KinoDB = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\marina.oleinik\source\repos\MinuVorm\AppData\Kino_DB.mdf;Integrated Security=True";
         SqlConnection connect_to_DB = new SqlConnection(conn_KinoDB);
-
         SqlCommand command;
-        
         SqlDataAdapter adapter;
         Button film_uuenda, film_kustuta, film_naita;
         public Admin_Form()
@@ -44,7 +42,6 @@ namespace MinuVorm
                 Location = new System.Drawing.Point(650, 75),
                 Size = new System.Drawing.Size(80, 25),
                 Text = "Uuendamine",
-                
             };
             this.Controls.Add(film_uuenda);
             film_uuenda.Click += Film_uuenda_Click;
@@ -53,12 +50,10 @@ namespace MinuVorm
                 Location = new System.Drawing.Point(650, 100),
                 Size = new System.Drawing.Size(80, 25),
                 Text = "Kustutamine",
-
-
             };
             this.Controls.Add(film_kustuta);
         }
-        static int Id=0;
+        int Id;
         
         private void Film_uuenda_Click(object sender, EventArgs e)
         {
@@ -75,10 +70,12 @@ namespace MinuVorm
                 //string file_pilt = poster_txt.Text + ".jpg";
                 //command.Parameters.AddWithValue("@poster", file_pilt);
                 command.ExecuteNonQuery();
+                dataGridView.Refresh();
                 connect_to_DB.Close();
                 ClearData();
                 Data();
                 MessageBox.Show("Andmed uuendatud");
+                
             }
             else
             {
@@ -150,13 +147,6 @@ namespace MinuVorm
         };
 
             Data();
-            /*this.Controls.Add(dataGridView);
-            this.Controls.Add(film_txt);
-            this.Controls.Add(aasta_txt);
-            this.Controls.Add(poster_txt);
-            this.Controls.Add(poster);*/
-            
-
         }
         public void Data()
         {
@@ -170,6 +160,7 @@ namespace MinuVorm
             dataGridView.Location = new System.Drawing.Point(10, 75);
             dataGridView.Size = new System.Drawing.Size(400, 200);
             connect_to_DB.Close();
+            
             this.Controls.Add(dataGridView);
             this.Controls.Add(film_txt);
             this.Controls.Add(aasta_txt);
@@ -178,12 +169,14 @@ namespace MinuVorm
         }
         private void DataGridView_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
+
             Id = Convert.ToInt32(dataGridView.Rows[e.RowIndex].Cells[0].Value.ToString());
             film_txt.Text = dataGridView.Rows[e.RowIndex].Cells[1].Value.ToString();
             aasta_txt.Text = dataGridView.Rows[e.RowIndex].Cells[2].Value.ToString();
             poster_txt.Text = dataGridView.Rows[e.RowIndex].Cells[3].Value.ToString();
             poster.Image = Image.FromFile(@"..\..\Posterid\" + dataGridView.Rows[e.RowIndex].Cells[3].Value.ToString());
             this.Text = dataGridView.Rows[e.RowIndex].Cells[1].Value.ToString();
+            
 
         }
         private void ClearData()
