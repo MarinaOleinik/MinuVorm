@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,19 +17,12 @@ namespace MinuVorm
         SqlConnection connect_to_DB = new SqlConnection(conn_KinoDB);
         SqlCommand command;
         SqlDataAdapter adapter;
-        Button film_uuenda, film_kustuta, film_naita;
+        Button film_uuenda, film_kustuta, film_naita, film_lisa,fail_lisa;
         public Admin_Form()
         {
 
             this.Size = new System.Drawing.Size(800, 450);
-            /*Button pilet_naita = new Button
-            {
-                Location = new System.Drawing.Point(50, 50),
-                Size = new System.Drawing.Size(80, 25),
-                Text = "Ostetud \npiletid"
-            };
-            this.Controls.Add(pilet_naita);
-            pilet_naita.Click += Pilet_naita_Click;*/
+            
             film_naita = new Button
             {
                 Location = new System.Drawing.Point(50, 25),
@@ -52,7 +46,87 @@ namespace MinuVorm
                 Text = "Kustutamine",
             };
             this.Controls.Add(film_kustuta);
+            
+            fail_lisa = new Button
+            {
+                Location = new System.Drawing.Point(650, 125),
+                Size = new System.Drawing.Size(80, 25),
+                Text = "Faili valimine",
+            };
+            this.Controls.Add(fail_lisa);
+            fail_lisa.Click += Fail_lisa_Click;
+            film_lisa = new Button
+            {
+                Location = new System.Drawing.Point(650, 150),
+                Size = new System.Drawing.Size(80, 25),
+                Text = "Lisamine",
+            };
+            this.Controls.Add(film_lisa);
+            film_lisa.Click += Film_lisa_Click;
         }
+        SaveFileDialog save;
+        private void Fail_lisa_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog open = new OpenFileDialog();
+            open.Filter = "Image Files(*.jpeg;*.bmp;*.png;*.jpg)|*.jpeg;*.bmp;*.png;*.jpg";
+            open.InitialDirectory = Path.GetFullPath(@"C:\Users\marina.oleinik\Pictures\Filmid");//kust
+            if (open.ShowDialog() == DialogResult.OK)
+            {
+                save = new SaveFileDialog();
+                //save.FileName = poster_txt.Text;
+                save.Filter = "Image Files(*.jpeg;*.bmp;*.png;*.jpg)|*.jpeg;*.bmp;*.png;*.jpg";
+                save.InitialDirectory = Path.GetFullPath(@"..\..\Posterid");//kuhu
+                
+                if (save.ShowDialog() == DialogResult.OK)
+                {
+                    File.Copy(open.FileName, save.FileName);
+                    save.RestoreDirectory = true;
+                    poster.Image = Image.FromFile(save.FileName);
+                    film_txt.Text= Path.GetFileNameWithoutExtension(save.FileName);
+                    poster_txt.Text = Path.GetFileNameWithoutExtension(save.FileName)+".JPG";
+                }
+
+            }
+        }
+
+        
+
+        
+        
+        private void Film_lisa_Click(object sender, EventArgs e)
+        {
+            if (film_txt.Text != "" && aasta_txt.Text != "" && poster_txt.Text != "")
+            {
+                try
+                {
+                    connect_to_DB.Open();
+                    command = new SqlCommand("INSERT INTO Filmid(Filmi_nimetus,Aasta,Poster) VALUES(@film,@aasta,@poster)", connect_to_DB);
+                    
+                    command.Parameters.AddWithValue("@film", film_txt.Text);
+                    command.Parameters.AddWithValue("@aasta", aasta_txt.Text);
+                    command.Parameters.AddWithValue("@poster", poster_txt.Text);
+
+                    //string file_pilt = poster_txt.Text + ".jpg";
+                    //command.Parameters.AddWithValue("@pilt", file_pilt);
+                   
+                    command.ExecuteNonQuery();
+                    connect_to_DB.Close();
+                    Data();
+                    ClearData();
+                    MessageBox.Show("Andmed on lisatud");
+                }
+                catch (Exception)
+                {
+
+                    MessageBox.Show("Viga lisamisega");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Viga else");
+            }
+        }
+
         int Id;
         
         private void Film_uuenda_Click(object sender, EventArgs e)

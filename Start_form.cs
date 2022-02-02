@@ -13,7 +13,7 @@ namespace MinuVorm
 {
     class Start_form: System.Windows.Forms.Form
     {
-        Button Filmid_btn, Piletid_btn;
+        Button Filmid_btn, Piletid_btn, Admin_btn;
 
         public Start_form()
         {
@@ -37,8 +37,23 @@ namespace MinuVorm
             };
             this.Controls.Add(Piletid_btn);
             Piletid_btn.Click += Piletid_btn_Click;
+            Admin_btn = new Button
+            {
+                Text = "Admin",
+                Location = new Point(50, 225),
+                Size = new Size(100, 50)
+            };
+            this.Controls.Add(Admin_btn);
+            Admin_btn.Click += Admin_btn_Click;
 
         }
+
+        private void Admin_btn_Click(object sender, EventArgs e)
+        {
+            Admin_Form admin_form = new Admin_Form();
+            admin_form.Show();
+        }
+
         string filminimetus;
         private void Piletid_btn_Click(object sender, EventArgs e)
         {

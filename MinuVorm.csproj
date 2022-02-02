@@ -192,6 +192,9 @@
     <Content Include="Pildid\Fon.jpg" />
     <Content Include="Piletid\piletid.txt" />
     <Content Include="Posterid\355.JPG" />
+    <Content Include="Posterid\Encanto.jpg" />
+    <Content Include="Posterid\Jahihooaeg.jpg" />
+    <Content Include="Posterid\Karje.JPG" />
     <Content Include="Posterid\Kuld.JPG" />
     <Content Include="Posterid\Riia_seiklused.JPG" />
     <Content Include="Posterid\Start.JPG" />
